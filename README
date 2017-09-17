@@ -1,0 +1,60 @@
+PREREQUISITES:
+
+For hic_breakfinder to run, you will need to have the eigen c++ library and the bamtools libraries installed.
+
+Eigen can be found here:
+http://eigen.tuxfamily.org/index.php?title=Main_Page
+
+and bamtools can be found here:
+https://github.com/pezmaster31/bamtools
+
+After installation, make sure to add the bamtools libraries to your LD_LIBRARY_PATH.
+For instance, if you are running bash, you can modify the .bashrc file in your home directory to include the line:
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/bamtools/lib
+
+
+
+INSTALLATION:
+
+To install, run:
+
+./configure
+make
+make install
+
+If you want to install somewhere that isn't "/usr/local/bin/" run:
+./configure --prefix=/path/to/install/directory
+
+If your version of eigen is installed in a non-traditional location, you will need to run configure as follows:
+./configure CPPFLAGS="-I /path/to/eigen"
+
+If your version of bamtools is installed in a non-traditional location, you will need to run configure as follows:
+./configure CPPFLAGS="-I /path/to/bamtools/include" LDFLAGS="-L/path/to/bamtools/lib/"
+
+If both eigen and bamtools are installed in non-traditional locations, you willn eed to run the configure file as follows:
+./configure CPPFLAGS="-I /path/to/bamtools/include -I /path/to/eigen" LDFLAGS="-L/path/to/bamtools/lib/"
+
+After installation, the hic_breakfinder executable should be stored in the bin directory.
+
+
+
+
+RUNNING hic_breakfinder:
+
+To run, simply type:
+./hic_breakfinder
+
+It will require 3 input files, a bam file, an inter-chromosomal expectation file, and an intra-chromosomal expectation file.
+The inter and intra-chromosomal expectation files are provided in the files directory.  We strongly recommend using the b38 build
+of the human genome for using Hi-C to identify structural variants.
+
+hic_breakfinder has the option of being run at 1kb final resolution.  For this, add the option --min-1kb when executing the command.  
+For 1kb resolution, the Hi-C experiment should be performed with frequent cutting enzymes like MboI and DpnII.  Using enzymes that cut
+less frequently than 1kb (i.e. HindIII or NcoI) will lead to problems if trying to identify breaks at 1kb.  Further, if the library has 
+high sequence coverage (>100 million reads), using --min-1kb can substantially slow down the run time.
+
+For testing the installation, you can use the bam file provided in the examples directory.  This is a shallow coverage bam file from K562 cells.
+The final output (*.breaks.txt) should match the example output file.
+
+For any questions/comments/concerns, please email jedixon@salk.edu
+
