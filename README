@@ -44,13 +44,21 @@ RUNNING hic_breakfinder:
 To run, simply type:
 ./hic_breakfinder
 
-It will require 3 input files, a bam file, an inter-chromosomal expectation file, and an intra-chromosomal expectation file. We strongly recommend using the b38 build
-of the human genome for using Hi-C to identify structural variants.
+It will require 3 input files, a bam file, an inter-chromosomal expectation file, and an intra-chromosomal expectation file. We strongly 
+recommend using the b38 build of the human genome for using Hi-C to identify structural variants.  
+
+We have provided these expectation files in hg38 coordinates for users.  These are in the associated files link below.
 
 hic_breakfinder has the option of being run at 1kb final resolution.  For this, add the option --min-1kb when executing the command.  
 For 1kb resolution, the Hi-C experiment should be performed with frequent cutting enzymes like MboI and DpnII.  Using enzymes that cut
 less frequently than 1kb (i.e. HindIII or NcoI) will lead to problems if trying to identify breaks at 1kb.  Further, if the library has 
 high sequence coverage (>100 million reads), using --min-1kb can substantially slow down the run time.
 
+If you want to check that the software is running correctly, we have a bam file from K562 and an associated example_output.txt file 
+showing the results of running hic_breakfinder using the --min-1kb command on this bam file in the associated files link.
+
 For any questions/comments/concerns, please email jedixon@salk.edu
+
+Associated files:
+https://www.dropbox.com/sh/qjkv5fha0ptg4o8/AAAkvOoxfFDB4XXgbCmp0QOBa?dl=0
 
