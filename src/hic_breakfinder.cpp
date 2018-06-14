@@ -49,12 +49,18 @@ void get_super_matrix (char* bam_file,\
   
   unordered_map<string,int> chr_name;
   for (long long int i = 1; i <= 22; i++) {
-    string out_chr = "chr" + to_string(i);
+    string out_chr_1 = "chr" + to_string(i);
+    string out_chr = to_string(i);
+    chr_name[out_chr_1] = 1;
     chr_name[out_chr] = 1;
   }
 
-  string chrX = "chrX";
-  string chrY = "chrY";
+  string chrX_1 = "chrX";
+  string chrY_1 = "chrY";
+  string chrX = "X";
+  string chrY = "Y";
+  chr_name[chrX_1] = 1;
+  chr_name[chrY_1] = 1;
   chr_name[chrX] = 1;
   chr_name[chrY] = 1;
 
