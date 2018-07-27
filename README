@@ -62,4 +62,29 @@ For any questions/comments/concerns, please email jedixon@salk.edu
 Associated files:
 https://salkinstitute.box.com/s/m8oyv2ypf8o3kcdsybzcmrpg032xnrgx
 
+Description of the output files:
+Hi-C breakfinder will produce lists of structural variant predictions at different resolutions (bin sizes). The final output file will be
+named $name.breaks.txt (where $name is the parameter that is given using the --name argument). It will also produce a series of
+intermediate calls at different resolutions (1Mb, 100kb, 10kb, optional 1kb for inter-chromosomal events, 100kb, 10kb, optional 1kb for
+interchromosomal events). These files are labelled as $name\_10kb.breaks.txt or $name\_10kb_intra.breaks.txt (for the case of the 10kb
+calls). 
+
+The first line in the example_output.txt file looks like this:
+90.3714	chr13	93252000	93363000	-	chr9	131176000	131280000	+	1kb
+
+Hi-C breakfinder aims to find sub-matrices of the original matrix that are most likely containing a structural rearrangement. Therefore, each prediction represents a sub-matrix, reporting the positions of the column and row coordinates of the sub-matrix.
+
+Here we will describe the meaning of column of the line:
+1 - Log-odds score of the rearrangement call. This is can be thought of as the "strength" of the call.
+2 - column chromosome
+3 - column start
+4 - column end
+5 - column strand
+6 - row chromosome
+7 - row start
+8 - row end
+9 - row strand
+10 - resolution of the call (minimal bin size for which this call is made).
+
+The strand predictions are mean to be estimates of whether the rearrangement breakpoint is at a given edge of the sub-matrix. A "+" value means that we predict the "end" coordinate to be closests to the actually breakpoint, and a "-" value indicates we believe the "start" coordinate is closest to the breakpoint.
 
