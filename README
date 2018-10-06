@@ -47,6 +47,8 @@ To run, simply type:
 It will require 3 input files, a bam file, an inter-chromosomal expectation file, and an intra-chromosomal expectation file. We strongly 
 recommend using the b38 build of the human genome for using Hi-C to identify structural variants.  
 
+A note on the bam file: hic_breakfinder will expect to find pair information for each read in the bam file. It will also expect that the data will have already been filtered to remove low quality alignments. We have listed several scripts that can be used to align/post-process Hi-C data in the following repository: https://github.com/dixonlab/bwa_mem_hic_aligner
+
 We have provided these expectation files in hg38 coordinates for users.  These are in the associated files link below.
 
 hic_breakfinder has the option of being run at 1kb final resolution.  For this, add the option --min-1kb when executing the command.  
