@@ -47,6 +47,10 @@ To run, simply type:
 It will require 3 input files, a bam file, an inter-chromosomal expectation file, and an intra-chromosomal expectation file. We strongly 
 recommend using the b38 build of the human genome for using Hi-C to identify structural variants.  
 
+There is one optional feature that can be included. This is specified by the option "--thresh <value>". This changes the threshold that is used for calling SVs. Under default conditions, this is generated automatically by evaluating the size of the matrices that are being evaluated. This feature allows users to specify the threshold themselves. Typically (under default conditions) this value is between 30 and 50. Higher values are more strict, lower values are less strict. An example of using this feature would be to lower it to a value less than 30, and this may allow for identification of addition SVs with the possibiility of including more false positives ("--thresh 30").
+
+
+
 A note on the bam file: hic_breakfinder will expect to find pair information for each read in the bam file. It will also expect that the data will have already been filtered to remove low quality alignments. We have listed several scripts that can be used to align/post-process Hi-C data in the following repository: https://github.com/dixonlab/bwa_mem_hic_aligner
 
 We have provided these expectation files in hg38 coordinates for users.  These are in the associated files link below.
