@@ -14,6 +14,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 
+
+
 using namespace BamTools;
 using namespace std;
 
@@ -24,8 +26,9 @@ void usage () {
   std::cerr << "--bam-file [input bam file]\n";
   std::cerr << "--exp-file-inter [Inter-chromosomal 1Mb expectation file]\n";
   std::cerr << "--exp-file-intra [Intra-chromosomal 100kb expectation file]\n";
-  std::cerr << "--name [output file name prefix, will append with *.super_matrix.txt and *.SR.txt]\n\n";  
-  
+  std::cerr << "--name [output file name prefix, will append with *.super_matrix.txt and *.SR.txt]\n";  
+  std::cerr << "--thresh [custom significance threshold - optional value]\n\n";
+
 }
 
 void split_string (std::vector<std::string> &output_vector,const std::string &input_string, const char &input_delimiter) {
@@ -2269,7 +2272,8 @@ void get_1Mb_odds_ratio_inter (string super_matrix_file,\
 			       string pc1_file,	       \
 			       int bin_size,\
 			       int max_size,\
-			       string name) {
+			       string name,\
+			       double thr) {
   
   unordered_map<string,vector<int> > ref_map;
   unordered_map<string,unordered_map<int,double> > bias_map;
@@ -2294,9 +2298,19 @@ void get_1Mb_odds_ratio_inter (string super_matrix_file,\
   int total_weight;
   find_parameters_1Mb(m_hash,r_hash,var_hash,N_hash,data_map,ref_map,bias_map,exp_map,pc1_map,bin_size,max_size,inter_m,inter_r,submatrix,total_weight);
 
-  double prior = 0.000001;
-  double corr = log(prior/(1 - prior));
-  double thresh = -1*(log(0.05/submatrix) + corr);
+  double thresh;
+
+  if (std::isnan(thr)) {
+
+    double prior = 0.000001;
+    double corr = log(prior/(1 - prior));
+    thresh = -1*(log(0.05/submatrix) + corr);
+    
+  } else {
+  
+    thresh = thr;
+    
+  }
 
   cerr << "Thresh is " << thresh << "\n";
 
@@ -3602,7 +3616,8 @@ void get_100kb_odds_ratio_inter (string super_matrix_file,	\
 				 string block_file,		\
 				 int bin_size,			\
 				 int max_size,			\
-				 string name) {
+				 string name,			\
+				 double thr) {
   
   vector<string> block_data = read_blocks(block_file,max_size);
 
@@ -3623,9 +3638,19 @@ void get_100kb_odds_ratio_inter (string super_matrix_file,	\
 
   find_parameters_100kb_inter(m_hash,r_hash,N_hash,data_map,ref_map,bias_map,bin_size,max_size,inter_m,inter_r,submatrix,total_weight);
 
-  double prior = 0.000001;
-  double corr = log(prior/(1 - prior));
-  double thresh = -1*(log(0.05/submatrix) + corr);
+  double thresh;
+
+  if (std::isnan(thr)) {
+
+    double prior = 0.000001;
+    double corr = log(prior/(1 - prior));
+    thresh = -1*(log(0.05/submatrix) + corr);
+
+  } else {
+  
+    thresh = thr;
+
+  }
 
   cerr << "threshold is\t" << thresh << "\n";
 
@@ -4754,7 +4779,8 @@ void get_100kb_odds_ratio_intra (string super_matrix_file,	\
 				 char* exp_file_intra,		\
 				 int bin_size,			\
 				 int max_size,			\
-				 string name) {
+				 string name,			\
+				 double thr) {
 
   unordered_map<string,vector<int> > ref_map;
   unordered_map<string,unordered_map<int,double> > bias_map;
@@ -4773,9 +4799,19 @@ void get_100kb_odds_ratio_intra (string super_matrix_file,	\
   double submatrix = 0;
   find_parameters_100kb_intra(m_hash,r_hash,N_hash,data_map,ref_map,bias_map,exp_map,bin_size,max_size,max_weight,submatrix);
 
-  double prior = 0.000001;
-  double corr = log(prior/(1 - prior));
-  double thresh = -1*(log(0.05/submatrix) + corr);
+  double thresh;
+  
+  if (std::isnan(thr)) {
+
+    double prior = 0.000001;
+    double corr = log(prior/(1 - prior));
+    thresh = -1*(log(0.05/submatrix) + corr);
+  
+  } else {
+  
+    thresh = thr;
+    
+  }
 
   find_breaks_100kb_intra(m_hash,r_hash,N_hash,data_map,ref_map,bias_map,exp_map,bin_size,max_size,max_weight,thresh,name);
   
@@ -5802,7 +5838,8 @@ void get_10kb_odds_ratio_intra (string super_matrix_file,       \
                                 string block_file,              \
                                 int bin_size,                   \
                                 int max_size,                   \
-                                string name) {
+                                string name,			\
+				double thr) {
 
   vector<string> block_data = read_blocks(block_file,bin_size);
 
@@ -5820,9 +5857,19 @@ void get_10kb_odds_ratio_intra (string super_matrix_file,       \
   double submatrix = 0;
   find_parameters_10kb_intra(m_hash,r_hash,N_hash,data_map,ref_map,bias_map,bin_size,max_size,max_weight,submatrix);
 
-  double prior = 0.000001;
-  double corr = log(prior/(1 - prior));
-  double thresh = -1*(log(0.05/submatrix) + corr);
+  double thresh;
+
+  if (std::isnan(thr)) {
+
+    double prior = 0.000001;
+    double corr = log(prior/(1 - prior));
+    thresh = -1*(log(0.05/submatrix) + corr);
+
+  } else {
+  
+    thresh = thr;
+
+  }
 
   cerr << thresh << "\n";
 
@@ -6137,6 +6184,8 @@ int main(int argc, char **argv) {
   char* exp_file_inter = NULL;
   char* exp_file_intra = NULL;
   int min_flag = 0;
+  int q = -1;
+  double thr = NAN;
 
   if (argc == 1) {
     usage();
@@ -6152,6 +6201,7 @@ int main(int argc, char **argv) {
       {"exp-file-inter",required_argument, 0, 'e'},
       {"exp-file-intra",required_argument, 0, 'p'},
       {"min-1kb",no_argument, 0, 'm'},
+      {"thresh",required_argument,0,'t'},
       {0, 0, 0, 0}
     };
     
@@ -6185,6 +6235,10 @@ int main(int argc, char **argv) {
 
       case 'm':
 	min_flag = 1;
+        break;
+
+      case 't':
+        thr = stod(optarg);
         break;
 
       case '?':
@@ -6243,39 +6297,39 @@ int main(int argc, char **argv) {
   string bias_vector_1Mb = name_1Mb + ".bias_vector.txt";
   string pc1_file = name_1Mb + ".super_matrix.norm.eig.txt";
 
-  get_1Mb_odds_ratio_inter(super_matrix_1Mb,bias_vector_1Mb,exp_file_inter,pc1_file,1000000,10000000,name_1Mb);
+  get_1Mb_odds_ratio_inter(super_matrix_1Mb,bias_vector_1Mb,exp_file_inter,pc1_file,1000000,10000000,name_1Mb,thr);
 
   string bias_vector_100kb = name_100kb + ".bias_vector.txt";
   string block_name_1Mb = name_1Mb + ".breaks.txt";
 
-  get_100kb_odds_ratio_inter(super_matrix_100kb,bias_vector_100kb,block_name_1Mb,100000,1000000,name_100kb);
+  get_100kb_odds_ratio_inter(super_matrix_100kb,bias_vector_100kb,block_name_1Mb,100000,1000000,name_100kb,thr);
 
   string bias_vector_10kb = name_10kb + ".bias_vector.txt";
   string block_name_100kb = name_100kb + ".breaks.txt";
 
-  get_100kb_odds_ratio_inter(super_matrix_10kb,bias_vector_10kb,block_name_100kb,10000,100000,name_10kb);
+  get_100kb_odds_ratio_inter(super_matrix_10kb,bias_vector_10kb,block_name_100kb,10000,100000,name_10kb,thr);
 
   if (min_flag == 1) {
     
     string bias_vector_1kb = name_1kb + ".bias_vector.txt";
     string block_name_10kb = name_10kb + ".breaks.txt";
 
-    get_100kb_odds_ratio_inter(super_matrix_1kb,bias_vector_1kb,block_name_10kb,1000,10000,name_1kb);
+    get_100kb_odds_ratio_inter(super_matrix_1kb,bias_vector_1kb,block_name_10kb,1000,10000,name_1kb,thr);
 
   }
   
-  get_100kb_odds_ratio_intra(super_matrix_100kb,bias_vector_100kb,exp_file_intra,100000,1000000,name_100kb_intra);
+  get_100kb_odds_ratio_intra(super_matrix_100kb,bias_vector_100kb,exp_file_intra,100000,1000000,name_100kb_intra,thr);
 
   string block_name_100kb_intra = name_100kb_intra + ".breaks.txt";
 
-  get_10kb_odds_ratio_intra(super_matrix_10kb,bias_vector_10kb,block_name_100kb_intra,10000,100000,name_10kb_intra);
+  get_10kb_odds_ratio_intra(super_matrix_10kb,bias_vector_10kb,block_name_100kb_intra,10000,100000,name_10kb_intra,thr);
 
   if (min_flag == 1) {
 
     string bias_vector_1kb = name_1kb + ".bias_vector.txt";
     string block_name_10kb_intra = name_10kb_intra + ".breaks.txt";
 
-    get_10kb_odds_ratio_intra(super_matrix_1kb,bias_vector_1kb,block_name_10kb_intra,1000,10000,name_1kb_intra);
+    get_10kb_odds_ratio_intra(super_matrix_1kb,bias_vector_1kb,block_name_10kb_intra,1000,10000,name_1kb_intra,thr);
     
   }
 
